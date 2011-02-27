@@ -1,0 +1,16 @@
+This is a simple grid demo that works against the Talis Platform's
+search service. It searches for the terms supplied then analyses the
+properties of the resources in the search results. The properties are 
+ranked by frequency and the top n selected for display.
+
+
+See http://iandavis.com/2009/lodgrid/
+
+
+Licence
+-------
+This work is hereby released into the Public Domain. 
+
+To view a copy of the public domain dedication, visit 
+http://creativecommons.org/licenses/publicdomain or send a letter to 
+Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
