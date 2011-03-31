@@ -1,0 +1,10 @@
+<Files ~ "^\.html">
+    Order allow,deny
+    Allow from all
+</Files>
+Options -MultiViews
+
+RewriteEngine on
+RewriteRule ^$  index.php [L]
+
+RewriteRule ^.*$  index.php [L]
