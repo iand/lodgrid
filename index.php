@@ -26,13 +26,23 @@ require_once MORIARTY_DIR . 'moriarty.inc.php';
 require_once MORIARTY_DIR . 'store.class.php';
 require_once MORIARTY_DIR . 'simplegraph.class.php';
 require_once MORIARTY_DIR . 'labeller.class.php';
+
+
+$script_uri = $_SERVER['SCRIPT_URI'];
+if (preg_match("~/lodgrid/([a-z][a-z0-9-]+)$~", $script_uri, $m)) {
+  $store = $m[1];
+}
+else if (!preg_match("~/lodgrid/?$~", $script_uri, $m)) {
+  header("404 Not Found");
+  header("Content-type: text/html");
+  print "<h1>Not Found</h1>";
+  exit();
+}
+
 if (array_key_exists('query', $_GET)) {
   $query = stripslashes(trim($_GET['query']));  
 }
 
-if (array_key_exists('store', $_GET)) {
-  $store = stripslashes(trim($_GET['store']));  
-}
 if (array_key_exists('columns', $_GET)) {
   $columns = stripslashes(trim($_GET['columns']));  
 }
@@ -40,56 +50,6 @@ else {
   $columns = 6;
 }
 
-$stores = array(
-   'dbpedia'
-  ,'openlibrary'
-  ,'ons'
-  ,'space'
-  ,'periodicals'
-  ,'iand-dev1'
-  ,'discogs'
-  ,'kwijibo-dev2'
-  ,'bbc-backstage'
-  ,'lcsh-info'
-  ,'iand'
-  ,'ckan' 
-  ,'moseley' 
-  ,'airports' 
-  ,'guardian' 
-  ,'transport' 
-  ,'talisians' 
-  ,'openvocab' 
-  ,'productdb' 
-  ,'schema-cache' 
-  ,'talis-irc' 
-  ,'ordnance-survey' 
-  ,'semlibsearch-dev1' 
-  ,'govuk-analytics'
-  ,'govuk-business'
-  ,'govuk-crime'
-  ,'govuk-culture'
-  ,'govuk-datasets'
-  ,'govuk-statistics'
-  ,'govuk-economy'
-  ,'govuk-education'
-  ,'govuk-environment'
-  ,'govuk-finance'
-  ,'govuk-geo'
-  ,'govuk-health'
-  ,'govuk-international-aid'
-  ,'govuk-justice'
-  ,'govuk-legislation'
-  ,'govuk-local-government'
-  ,'govuk-notices'
-  ,'govuk-people'
-  ,'govuk-science'
-
-
-);
-
-if (! in_array($store, $stores)) {
-  $stores[] = $store;
-}
 
 
 
@@ -97,25 +57,25 @@ function show_samples() {
   ?>
     <p>Try one of these sample searches:</p>
     <ul>
-      <li><a href="?store=bbc-backstage&storeff=&query=stephen+fry&columns=6">search for "stephen fry" in BBC Programmes and Music data</a></li>
-      <li><a href="?store=airports&query=london&columns=6">search for "london" in airports data</a></li>
-      <li><a href="?store=space&query=jupiter&columns=6">search for "jupiter" in NASA data</a></li>
-      <li><a href="?store=discogs&query=prodigy&columns=6">search for "prodigy" in Discogs</a></li>
-      <li><a href="?store=lcsh-info&query=medicine&columns=6">search for "medicine" in Library of Congress Subject Headings</a></li>
-      <li><a href="?store=dbpedia&query=france&columns=3">search for "france" in DBPedia </a></li>
-      <li><a href="?store=semlibsearch-dev1&query=discworld&columns=3">search for "discworld" in Semantic Library data</a></li>
+      <li><a href="./lodgrid/bbc-backstage?query=stephen+fry&columns=6">search for "stephen fry" in BBC Programmes and Music data</a></li>
+      <li><a href="./lodgrid/airports?query=london&columns=6">search for "london" in airports data</a></li>
+      <li><a href="./lodgrid/space?query=jupiter&columns=6">search for "jupiter" in NASA data</a></li>
+      <li><a href="./lodgrid/discogs?query=prodigy&columns=6">search for "prodigy" in Discogs</a></li>
+      <li><a href="./lodgrid/lcsh-info?query=medicine&columns=6">search for "medicine" in Library of Congress Subject Headings</a></li>
+      <li><a href="./lodgrid/dbpedia?query=france&columns=3">search for "france" in DBPedia </a></li>
+      <li><a href="./lodgrid/semlibsearch-dev1?query=discworld&columns=3">search for "discworld" in Semantic Library data</a></li>
       
-      <li><a href="?store=guardian&query=alan&columns=6">search for "alan" in Guardian MP Expense data</a></li>
-      <li><a href="?store=talis-irc&query=germany&columns=5">search for "germany" in Talis IRC data</a></li>
-      <li><a href="?store=schema-cache&query=person&columns=5">search for "person" in schema cache data</a></li>
-      <li><a href="?store=ordnance-survey&query=london&columns=5">search for "london" in Ordnance Survey data</a></li>
-      <li><a href="?store=productdb&query=honda&columns=5">search for "honda" in ProductDB</a></li>
-      <li><a href="?store=bbc-backstage&query=type%3A&quot;http%3A%2F%2Fpurl.org%2Fontology%2Fmo%2FMusicArtist&quot;+big+band&columns=6">search for "big bands" in BBC Programmes and Music data</a></li>
-      <li><a href="?store=space&query=type%3A&quot;http%3A%2F%2Fpurl.org%2Fnet%2Fschemas%2Fspace%2FSpacecraft&quot;+agency%3Aindia&columns=6">search for spacecraft launched by india in NASA data</a></li>
-      <li><a href="?store=kwijibo-dev2&query=Trossachs&columns=6">search for "trossachs" in Climbing data</a></li>
-      <li><a href="?store=periodicals&query=chemical&columns=6">search for "chemical" in Academic Periodicals data</a></li>
-      <li><a href="?store=datagovuk&query=anthony&columns=5">search for "anthony" in London Gazette data</a></li>
-      <li><a href="?store=govuk-crime&query=fixed+penalty&columns=5">search for "fixed penalty" in UK Government Crime data</a></li>
+      <li><a href="./lodgrid/guardian?query=alan&columns=6">search for "alan" in Guardian MP Expense data</a></li>
+      <li><a href="./lodgrid/talis-irc?query=germany&columns=5">search for "germany" in Talis IRC data</a></li>
+      <li><a href="./lodgrid/schema-cache?query=person&columns=5">search for "person" in schema cache data</a></li>
+      <li><a href="./lodgrid/ordnance-survey?query=london&columns=5">search for "london" in Ordnance Survey data</a></li>
+      <li><a href="./lodgrid/productdb?query=honda&columns=5">search for "honda" in ProductDB</a></li>
+      <li><a href="./lodgrid/bbc-backstage?query=type%3A&quot;http%3A%2F%2Fpurl.org%2Fontology%2Fmo%2FMusicArtist&quot;+big+band&columns=6">search for "big bands" in BBC Programmes and Music data</a></li>
+      <li><a href="./lodgrid/space?query=type%3A&quot;http%3A%2F%2Fpurl.org%2Fnet%2Fschemas%2Fspace%2FSpacecraft&quot;+agency%3Aindia&columns=6">search for spacecraft launched by india in NASA data</a></li>
+      <li><a href="./lodgrid/kwijibo-dev2?query=Trossachs&columns=6">search for "trossachs" in Climbing data</a></li>
+      <li><a href="./lodgrid/periodicals?query=chemical&columns=6">search for "chemical" in Academic Periodicals data</a></li>
+      <li><a href="./lodgrid/datagovuk?query=anthony&columns=5">search for "anthony" in London Gazette data</a></li>
+      <li><a href="./lodgrid/govuk-crime?query=fixed+penalty&columns=5">search for "fixed penalty" in UK Government Crime data</a></li>
     
     </ul>
   
@@ -221,28 +181,13 @@ table.results th { font-weight: bold; font-size: 1.2em; }
   </head>
   <body>
     <h3><a href="./">LODGRID</a> - Explore data in the Talis Platform</h3>
+    <?php
+      if (isset($store) ) {
+    ?>
     <form action="" method="get">
       <table>
         <tr>
-          <th style="width:14em"><label for="store">Select a platform store: </label></th>
-          <td>
-            <select name="store" id="store">
-              <?php
-                sort($stores);
-                for ($i = 0; $i < count($stores); $i++) {
-                  echo '<option';
-                  if ($store == $stores[$i]) echo ' selected="selected"';
-                  
-                  echo ' value="' . htmlspecialchars($stores[$i]) . '">' . htmlspecialchars($stores[$i]) . '</option>';
-                }
-              ?>
-  
-          
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th><label for="query">Search terms: </label></th>
+          <th><label for="query">Search <?php echo(htmlspecialchars($store)); ?> store: </label></th>
           <td><input type="text" value="<?php echo(htmlspecialchars($query));?>" name="query" id="query" size="40"/> <input type="submit" value="Search"/></td>
         </tr>
         <tr>
@@ -259,7 +204,9 @@ table.results th { font-weight: bold; font-size: 1.2em; }
       </table>
             
     </form>
-
+    <?php
+    }
+    ?>
 
 <?php
 if ($query && $store) {
@@ -330,7 +277,7 @@ if ($query && $store) {
         $columns = count($ordered_properties);
       }
       echo '<tr>';
-      echo '<th>&nbsp;</th><th>&nbsp;</th>';
+      echo '<th>&nbsp;</th>';
       for ($i = 0; $i < $columns; $i++) {
         echo '<th><a href="' . htmlspecialchars($ordered_properties[$i]) . '">' . htmlspecialchars($labeller->get_label($ordered_properties[$i], $g, true)) . '</a></th>' . "\n";
       }
@@ -338,7 +285,7 @@ if ($query && $store) {
 
       foreach ($items as $item_uri) {
         echo '<tr>';
-        echo '<td><a href="http://api.talis.com/stores/iand-dev1/items/dipper.html#s='  . htmlspecialchars(urlencode($store)) . '&q=' . htmlspecialchars(urlencode($item_uri)) . '"><img src="iconDipper.gif" alt="Explore" title="Explore with Dipper" width="43" height="28" /></a></td><td><a href="' . htmlspecialchars($item_uri) . '">' . htmlspecialchars($labeller->get_label($item_uri, $g, true)) . '</a></td>';
+        echo '<td><a href="' . htmlspecialchars($item_uri) . '">' . htmlspecialchars($labeller->get_label($item_uri, $g, true)) . '</a><br><br>&rarr;&nbsp;<a href="http://linksailor.com/nav?uri='. htmlspecialchars(urlencode($item_uri)) . '">View&nbsp;with&nbsp;LinkSailor</a></td>';
         for ($i = 0; $i < $columns; $i++) {
           echo '<td>';
           $values = $g->get_subject_property_values($item_uri, $ordered_properties[$i]);
